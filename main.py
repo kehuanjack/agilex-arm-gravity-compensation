@@ -4,7 +4,7 @@ import time
 import numpy as np
 from agx_pinocchio import AgxPinocchio
 from scipy.spatial.transform import Rotation as R
-from pyAgxArm import create_agx_arm_config, AgxArmFactory
+from pyAgxArm import create_agx_arm_config, AgxArmFactory, ArmModel, PiperFW
 
 
 def main():
@@ -21,13 +21,13 @@ def main():
     # 控制频率
     control_frequency = 200.0
 
-    # 关节力矩修正比例（根据实际情况调整）
-    rx_ratio = [0.25, 0.25, 0.25, 1.0, 1.0, 1.0]
-    # tx_ratio = [0.25, 0.25, 0.25, 1.0, 1.0, 1.0]   # 1.8-2及以下版本
-    tx_ratio = [1.0] * 6    # 1.8-3及以上版本
-
     # 初始化机械臂接口
-    cfg = create_agx_arm_config(robot="piper_x", comm="can", channel="can0", interface="socketcan")
+    cfg = create_agx_arm_config(
+        robot=ArmModel.PIPER_X,
+        firmeware_version=PiperFW.V183,
+        interface="socketcan",
+        channel="can0",
+    )
     robot = AgxArmFactory.create_arm(cfg)
     robot.connect()
 
@@ -61,7 +61,7 @@ def main():
             for i in range(1, robot.joint_nums + 1):
                 ms = robot.get_motor_states(i)
                 if ms is not None:
-                    joint_velocities[i - 1] = ms.msg.motor_speed
+                    joint_velocities[i - 1] = ms.msg.velocity
                     joint_torques[i - 1] = ms.msg.torque
 
             # 计算重力补偿扭矩
@@ -71,10 +71,8 @@ def main():
             try: 
                 for joint_id in range(1, robot.joint_nums + 1):
                     joint_idx = joint_id - 1
-                    actual_torque = tx_ratio[joint_idx] * gravity_torque[joint_idx]
+                    actual_torque = gravity_torque[joint_idx]
                     robot.move_mit(joint_id, 0, 0, 0, 0, actual_torque)
-                    
-                    joint_torques[joint_idx] /= rx_ratio[joint_idx]
                 
                 print(f"目标力矩 - 反馈力矩: {np.round(gravity_torque - joint_torques, 3).tolist()}")
                     
