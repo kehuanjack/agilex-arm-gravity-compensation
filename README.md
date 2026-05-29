@@ -1,4 +1,4 @@
-# 重力补偿
+# 动力学简单应用
 
 ## 安装匹诺曹库
 
@@ -12,16 +12,41 @@ sudo apt install ros-$ROS_DISTRO-pinocchio ros-$ROS_DISTRO-hpp-fcl ros-$ROS_DIST
 bash can_activate.sh
 ```
 
-## 运行程序
+## 安装SDK
 
-运行前需先安装新的SDK，SDK代码仓库：[agilexrobotics/pyAgxArm](https://github.com/agilexrobotics/pyAgxArm)
+运行前需先安装新版 SDK：  
+[agilexrobotics/pyAgxArm](https://github.com/agilexrobotics/pyAgxArm)
+
+## 项目结构
+
+- `core/`：Pinocchio 封装、URDF/MDH 工具与解析层识别
+- `controller/`：关节阻抗与笛卡尔阻抗控制器
+- `nero/`：Nero 机型示例脚本
+- `piper/`：Piper 机型示例脚本
+- `piper_x/`：PiperX 机型示例脚本
+
+## 运行示例
+
+### Piper
 
 ```bash
-python3 main.py
+python3 piper/main_gc.py             # 重力补偿
+python3 piper/main_jnt_imp.py        # 关节阻抗
+python3 piper/main_tast_imp.py       # 笛卡尔阻抗
 ```
 
-## 程序默认参数（需根据实际情况修改）
+### PiperX
 
-- `力矩系数`：1.8-3及以上固件版本的系数
-- `机械臂类型`：piper_x无夹爪版本
-- `机械臂底座安装姿态`：水平安装
+```bash
+python3 piper_x/main_gc.py
+python3 piper_x/main_jnt_imp.py
+python3 piper_x/main_tast_imp.py
+```
+
+### Nero
+
+```bash
+python3 nero/main_gc.py
+python3 nero/main_jnt_imp.py
+python3 nero/main_tast_imp.py
+```
