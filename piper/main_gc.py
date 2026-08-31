@@ -27,7 +27,7 @@ def main():
     # 初始化机械臂接口
     cfg = create_agx_arm_config(
         robot=ArmModel.PIPER,
-        firmeware_version=PiperFW.V188,
+        firmeware_version=PiperFW.V189,
         channel="can0",
     )
     robot = AgxArmFactory.create_arm(cfg)
@@ -35,7 +35,7 @@ def main():
 
     # 等待机械臂使能
     while not robot.enable():
-        time.sleep(0.01)
+        time.sleep(1)
     print("机械臂使能成功")
 
     # 获取当前关节角度（等待首帧有效数据）

@@ -24,23 +24,20 @@ def main():
     # 初始化机械臂接口
     cfg = create_agx_arm_config(
         robot=ArmModel.NERO,
-        firmeware_version=NeroFW.V111,
+        firmeware_version=NeroFW.V121,
         channel="can0",
     )
     robot = AgxArmFactory.create_arm(cfg)
     robot.connect()
 
-    # 设置机械臂模式为正常模式
-    robot.set_normal_mode()
-
     # 等待机械臂使能
     while not robot.enable():
-        time.sleep(0.01)
+        time.sleep(1)
     print("机械臂使能成功")
 
     # 指定初始位置（根据需要修改）
-    robot.move_j([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
-    time.sleep(1)
+    # robot.move_j([0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0])
+    # time.sleep(1)
 
     # 获取当前关节角度（等待首帧有效数据）
     joint_angles = None
